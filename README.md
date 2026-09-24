@@ -226,6 +226,8 @@ Security
   storage outside the web root, `config.php` files read-only, PHP version not
   exposed, core and configuration files blocked, `X-Content-Type-Options`,
   `X-Frame-Options` and `Referrer-Policy` headers.
+- PHP gets the real client IP in `REMOTE_ADDR` (logs, login protection) also
+  behind Traefik or another proxy on a private network.
 - Only Caddy (and Mailpit in development) publishes ports; the database is
   internal. `HTTP_BIND` defaults to `127.0.0.1`.
 - Not included: a web application firewall, login rate limiting, or off-site
