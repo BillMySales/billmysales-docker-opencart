@@ -1,0 +1,28 @@
+# Mount an extension from a local directory into extension/, editable live
+# (changes apply on the next request). The extension is not installed
+# automatically: install it in Extensions > Installer / Extensions.
+#
+# In .env:
+#   COMPOSE_FILE=compose.yaml:overrides/extension.yaml
+#   EXTENSION_PATH=../my-extension   # extension source, relative to compose.yaml
+#   EXTENSION_NAME=myextension       # directory name under extension/
+
+x-extension: &extension ${EXTENSION_PATH:?Set EXTENSION_PATH in .env}:/var/www/html/extension/${EXTENSION_NAME:?Set EXTENSION_NAME in .env}
+
+services:
+  opencart:
+    volumes:
+      - *extension
+  # Caddy serves the extension's static files (CSS, JS, images).
+  caddy:
+    volumes:
+      - ${EXTENSION_PATH}:/var/www/html/extension/${EXTENSION_NAME}:ro
+  setup:
+    volumes:
+      - *extension
+  cron:
+    volumes:
+      - *extension
+  backup:
+    volumes:
+      - *extension

@@ -1,0 +1,85 @@
+# Caddy in front of the OpenCart PHP-FPM container.
+# Translated from OpenCart's .htaccess.txt (upload/.htaccess.txt).
+{
+	# No admin API: config is static, reloads happen by restarting the container.
+	admin off
+
+	servers {
+		# Behind a reverse proxy on a private network, log the real client IP
+		# (X-Forwarded-For) and trust X-Forwarded-Proto for HTTPS detection.
+		trusted_proxies static private_ranges
+	}
+}
+
+(opencart) {
+	root * /var/www/html
+	encode zstd gzip
+
+	# Same variable as upload_max_filesize/post_max_size in config/php/php.ini.
+	request_body {
+		max_size {$UPLOAD_MAX_SIZE}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	# `route` keeps the rules in the order written below.
+	route {
+		# Hide dotfiles, except .well-known.
+		@hidden {
+			path /.*
+			not path /.well-known/*
+		}
+		respond @hidden 403
+
+		# Core code, installer, configuration and CLI entry points.
+		@private path /system/* /install/* /config.php /config-dist.php /{$OC_ADMIN_DIR}/config.php /{$OC_ADMIN_DIR}/config-dist.php /cron.php /php.ini
+		respond @private 403
+
+		# Templates, settings and logs (as in .htaccess.txt), and text files
+		# other than robots.txt.
+		@sensitive path_regexp (?i)\.(tpl|twig|ini|log|sql|md)$
+		respond @sensitive 403
+		@text {
+			path_regexp (?i)\.txt$
+			not path /robots.txt
+		}
+		respond @text 403
+
+		# SEO URLs: anything that isn't a file goes to the front controller as
+		# _route_ (except the back office and static assets).
+		@seo {
+			not path /{$OC_ADMIN_DIR}/*
+			not file {path} {path}/index.php
+			not path_regexp (?i)\.(ico|gif|jpe?g|png|webp|js|css|svg)$
+			path_regexp seo ^/(.+)$
+		}
+		rewrite @seo /index.php?_route_={re.seo.1}&{query}
+
+		php_fastcgi opencart:9000
+
+		@static path *.css *.js *.mjs *.gif *.ico *.jpg *.jpeg *.png *.svg *.webp *.avif *.woff *.woff2 *.ttf *.eot
+		header @static Cache-Control "public, max-age=604800"
+		file_server
+	}
+}
+
+# Public site. SITE_ADDRESS is ":80" for plain HTTP (local, or behind another
+# proxy) or a domain name, which makes Caddy obtain and renew a certificate
+# automatically ("localhost" uses Caddy's internal CA).
+{$SITE_ADDRESS} {
+	import opencart
+	log {
+		output stdout
+	}
+}
+
+# Internal-only site (port not published) for the container healthcheck, so it
+# works whatever SITE_ADDRESS is.
+:8080 {
+	import opencart
+}
