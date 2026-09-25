@@ -209,6 +209,15 @@ Notes:
   cron job fails with `Class "Twig\Loader\FilesystemLoader" not found`. The
   `cron` service loads it first (`scripts/cron-autoload.php` as
   `auto_prepend_file`) without changing OpenCart's files.
+- OpenCart's admin "Forgotten password" never works (4.1.0.4, and still in
+  `master` on 2026-09-25): it always answers "The E-Mail Address was not
+  found in our records!", even for an existing admin email.
+  `admin/controller/common/forgotten.php` builds its input with
+  `$post_info = ['email' => ''] + $this->request->post;`, and PHP's array
+  union keeps the left-hand value, so the email is always empty (it should
+  be `$this->request->post + ['email' => '']`). Not worked around (the code
+  lives in the volume and OpenCart updates itself): change an admin's
+  password in the back office (Users) or reset it in the database.
 - `.htaccess` files are ignored; the equivalent rules (SEO URLs, blocked
   templates and settings files) are in the Caddyfile, translated from
   OpenCart's `.htaccess.txt`, plus `system/`, `install/`, both `config.php`
