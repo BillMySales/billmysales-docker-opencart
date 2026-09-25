@@ -208,7 +208,11 @@ Notes:
 - OpenCart 4.1.0.4's `cron.php` doesn't load the Composer autoloader, so every
   cron job fails with `Class "Twig\Loader\FilesystemLoader" not found`. The
   `cron` service loads it first (`scripts/cron-autoload.php` as
-  `auto_prepend_file`) without changing OpenCart's files.
+  `auto_prepend_file`) without changing OpenCart's files. When bumping
+  `OC_VERSION`, check whether `cron.php` loads the autoloader and remove the
+  workaround if so.
+- The home page title is `meta_title` inside `config_description` (JSON per
+  language), not `config_meta_title`.
 - OpenCart's admin "Forgotten password" never works (4.1.0.4, and still in
   `master` on 2026-09-25): it always answers "The E-Mail Address was not
   found in our records!", even for an existing admin email.
