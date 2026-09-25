@@ -222,8 +222,8 @@ Security
 --------
 
 - Client IP headers: PHP gets only the real client IP (as Caddy sees it) in
-  `REMOTE_ADDR`, `X-Forwarded-For` and `X-Real-IP`, and no `Client-Ip` or
-  `Cf-Connecting-Ip` (a client could forge them): OpenCart takes the client IP
+  `REMOTE_ADDR`, `X-Forwarded-For` and `X-Real-IP`, and no `Client-Ip`,
+  `Cf-Connecting-Ip` or `X-Forwarded-Port` (a client could forge them): OpenCart takes the client IP
   from `Cf-Connecting-Ip`, `X-Forwarded-For`, `X-Real-IP` or `Client-Ip`, and
   stores `X-Forwarded-For` with each order.
 - No default secrets: compose fails if the required passwords are missing. The
