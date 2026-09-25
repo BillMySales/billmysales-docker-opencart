@@ -12,9 +12,11 @@ hosting). Maintained by [BillMySales](https://www.billmysales.com).
 | Database   | `mariadb`                                    | 12.3 (LTS)        |
 | Mailpit    | `axllent/mailpit` (optional, dev)            | v1.31             |
 
-There is no official, vendor or maintained community Docker image for
-OpenCart (Bitnami's stopped being free in 2025, and the Dockerfile bundled in
-the release zip doesn't build and uses Apache with a fixed old PHP).
+There is no official or vendor Docker image for OpenCart, and the community
+images found (Docker Hub, 2026-09) are old versions, Apache-based,
+amd64-only or all-in-one (web server and PHP in one container). Bitnami's
+stopped being free in 2025, and the Dockerfile bundled in the release zip
+doesn't build and uses Apache with a fixed old PHP.
 `image/Dockerfile` puts the official release zip on `php:<ver>-fpm-alpine`,
 verified with SHA-256 (151 MB). OpenCart 4.1.0.4 includes fixes for PHP 8.5
 and for Alpine/musl.
