@@ -49,7 +49,8 @@ Production
 ```shell
 cp .env.prod.example .env
 # Fill in OC_URL, SITE_ADDRESS, DB_PASSWORD, DB_ROOT_PASSWORD,
-# OC_ADMIN_PASSWORD, OC_ADMIN_EMAIL, OC_ADMIN_DIR and the SMTP_* values.
+# OC_ADMIN_PASSWORD, OC_ADMIN_EMAIL and OC_ADMIN_DIR.
+# Recommended: the SMTP_* values (without SMTP_HOST no emails are sent).
 docker compose up -d
 ```
 
@@ -58,6 +59,8 @@ docker compose up -d
 - Behind an existing Traefik (no host ports), use `overrides/traefik.yaml`
   (see [Overrides](#overrides)).
 - Compose refuses to start while a required value is missing.
+- Configure SMTP (recommended, not required): without `SMTP_HOST` no emails
+  are sent (the image has no local mail server).
 - Use a hard-to-guess back office directory (`OC_ADMIN_DIR`).
 - The `backup` profile is enabled by default in the production template.
 
@@ -169,9 +172,11 @@ Every variable is documented in `.env.prod.example`. Main groups:
   `HTTPS_PORT`.
 - **Credentials and back office**: `DB_PASSWORD`, `DB_ROOT_PASSWORD`,
   `OC_ADMIN_PASSWORD`, `OC_ADMIN_EMAIL`, `OC_ADMIN_DIR` (required),
-  `OC_ADMIN_USER`.
+  `OC_ADMIN_USER`. The admin user, password and email are only used by the
+  installer: changing them later doesn't change the account.
 - **Store** (first install only): `OC_STORE_NAME`, `OC_COUNTRY`, `OC_ZONE`,
-  `OC_CURRENCY`, `OC_CURRENCY_TITLE`; `PHP_TIMEZONE`.
+  `OC_CURRENCY`, `OC_CURRENCY_TITLE`; `PHP_TIMEZONE` (the store's time zone
+  on the first install, PHP's `date.timezone` on every start).
 - **Versions**: `OC_VERSION` + `OC_SHA256`, `PHP_VERSION`, `OC_IMAGE`,
   `CADDY_VERSION`, `MARIADB_VERSION`.
 - **OpenCart / PHP**: `OC_DEBUG`, `PHP_DISPLAY_ERRORS`, `PHP_MEMORY_LIMIT`,
