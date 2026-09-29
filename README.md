@@ -220,8 +220,7 @@ Notes:
   workaround if so.
 - The home page title is `meta_title` inside `config_description` (JSON per
   language), not `config_meta_title`.
-- OpenCart's admin "Forgotten password" never works (4.1.0.4, and still in
-  `master` on 2026-09-25): it always answers "The E-Mail Address was not
+- OpenCart's admin "Forgotten password" never works (4.1.0.4): it always answers "The E-Mail Address was not
   found in our records!", even for an existing admin email.
   `admin/controller/common/forgotten.php` builds its input with
   `$post_info = ['email' => ''] + $this->request->post;`, and PHP's array
@@ -265,7 +264,7 @@ Security
 Validation
 ----------
 
-What was checked for this stack (2026-09-24):
+What was checked for this stack:
 
 - Clean start (`down -v` + `up -d`, image already built) in about 15 s: every
   service `healthy`, `setup` `Exited (0)`; a second run makes no changes.
